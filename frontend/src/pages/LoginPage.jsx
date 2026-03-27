@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo-licitafacil.png';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -39,9 +40,7 @@ const LoginPage = () => {
         </div>
         <div className="relative z-10 flex flex-col justify-center p-12 text-white">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-              <Briefcase className="w-10 h-10" />
-            </div>
+            <img src={logo} alt="LicitaFácil" className="w-20 h-20 rounded-2xl" />
             <div>
               <h1 className="text-4xl font-bold">LicitaFácil</h1>
               <p className="text-white/70">Gestão de Licitações</p>
@@ -71,9 +70,7 @@ const LoginPage = () => {
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <Briefcase className="w-7 h-7 text-white" />
-            </div>
+            <img src={logo} alt="LicitaFácil" className="w-12 h-12" />
             <div>
               <h1 className="text-2xl font-bold text-primary">LicitaFácil</h1>
               <p className="text-sm text-gray-500">Gestão de Licitações</p>

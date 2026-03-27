@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, FileText, BarChart3, LogOut, Briefcase, FileSignature, Users, Globe } from 'lucide-react';
+import { LayoutDashboard, FileText, BarChart3, LogOut, FileSignature, Users, Globe } from 'lucide-react';
+import logo from '../assets/logo-licitafacil.png';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { logout, user } = useAuth();
@@ -38,9 +39,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-primary-light">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                <Briefcase className="w-6 h-6" />
-              </div>
+              <img src={logo} alt="LicitaFácil" className="w-10 h-10 rounded-lg" />
               <div>
                 <h1 className="text-xl font-bold">LicitaFácil</h1>
                 <p className="text-xs text-white/70">Gestão de Licitações</p>
