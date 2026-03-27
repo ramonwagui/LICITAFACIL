@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 
+const sql = neon(process.env.POSTGRES_URL);
 const JWT_SECRET = process.env.JWT_SECRET || 'licitafacil_secret_key_2024';
 
 function autenticarToken(request) {
@@ -18,10 +19,10 @@ export async function GET(request) {
     const porModalidade = await sql`SELECT modalidade, COUNT(*) as total FROM licitacoes GROUP BY modalidade`;
     const valorTotal = await sql`SELECT SUM(valor_estimado) as total FROM licitacoes`;
     return Response.json({
-      total: parseInt(total.rows[0].total),
+      total: parseInt(total[0].total),
       porStatus,
       porModalidade,
-      valorTotal: valorTotal.rows[0].total || 0
+      valorTotal: valorTotal[0]?.total || 0
     });
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 401 });

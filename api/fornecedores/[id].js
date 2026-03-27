@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 
+const sql = neon(process.env.POSTGRES_URL);
 const JWT_SECRET = process.env.JWT_SECRET || 'licitafacil_secret_key_2024';
 
 function autenticarToken(request) {
@@ -14,7 +15,7 @@ export async function GET(request, { params }) {
   try {
     autenticarToken(request);
     const result = await sql`SELECT * FROM fornecedores WHERE id = ${params.id}`;
-    return Response.json(result.rows[0]);
+    return Response.json(result[0]);
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 401 });
   }
@@ -24,8 +25,10 @@ export async function PUT(request, { params }) {
   try {
     autenticarToken(request);
     const body = await request.json();
-    const result = await sql`UPDATE fornecedores SET ${sql(body)} WHERE id=${params.id} RETURNING *`;
-    return Response.json(result.rows[0]);
+    const keys = Object.keys(body);
+    const setClause = keys.map(k => `${k} = ${sql(body[k])}`).join(', ');
+    const result = await sql`UPDATE fornecedores SET ${setClause} WHERE id=${params.id} RETURNING *`;
+    return Response.json(result[0]);
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 500 });
   }

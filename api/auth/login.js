@@ -1,7 +1,8 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+const sql = neon(process.env.POSTGRES_URL);
 const JWT_SECRET = process.env.JWT_SECRET || 'licitafacil_secret_key_2024';
 
 function autenticarToken(req) {
@@ -17,11 +18,11 @@ export async function POST(request) {
     const { email, senha } = body;
     
     const result = await sql`SELECT * FROM usuarios WHERE email = ${email}`;
-    if (result.rowCount === 0) {
+    if (result.length === 0) {
       return Response.json({ erro: 'Usuário não encontrado' }, { status: 400 });
     }
     
-    const usuario = result.rows[0];
+    const usuario = result[0];
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
     if (!senhaValida) {
       return Response.json({ erro: 'Senha incorreta' }, { status: 400 });

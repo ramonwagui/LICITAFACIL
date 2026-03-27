@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 
+const sql = neon(process.env.POSTGRES_URL);
 const JWT_SECRET = process.env.JWT_SECRET || 'licitafacil_secret_key_2024';
 
 function autenticarToken(request) {
@@ -13,12 +14,11 @@ function autenticarToken(request) {
 export async function GET(request, { params }) {
   try {
     autenticarToken(request);
-    const { id } = params;
-    const result = await sql`SELECT * FROM licitacoes WHERE id = ${id}`;
-    if (result.rowCount === 0) {
+    const result = await sql`SELECT * FROM licitacoes WHERE id = ${params.id}`;
+    if (result.length === 0) {
       return Response.json({ erro: 'Licitação não encontrada' }, { status: 404 });
     }
-    return Response.json(result.rows[0]);
+    return Response.json(result[0]);
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 401 });
   }
@@ -27,7 +27,6 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     autenticarToken(request);
-    const { id } = params;
     const body = await request.json();
     
     const result = await sql`
@@ -37,9 +36,9 @@ export async function PUT(request, { params }) {
         status=${body.status}, data_criacao=${body.data_criacao}, data_publicacao=${body.data_publicacao},
         data_sessao=${body.data_sessao}, data_homologacao=${body.data_homologacao}, observacoes=${body.observacoes},
         updated_at=CURRENT_TIMESTAMP
-      WHERE id=${id} RETURNING *`;
+      WHERE id=${params.id} RETURNING *`;
     
-    return Response.json(result.rows[0]);
+    return Response.json(result[0]);
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 500 });
   }
@@ -48,8 +47,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     autenticarToken(request);
-    const { id } = params;
-    await sql`DELETE FROM licitacoes WHERE id = ${id}`;
+    await sql`DELETE FROM licitacoes WHERE id = ${params.id}`;
     return Response.json({ message: 'Licitação excluída' });
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 500 });

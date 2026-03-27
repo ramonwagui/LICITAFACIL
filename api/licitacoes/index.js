@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 
+const sql = neon(process.env.POSTGRES_URL);
 const JWT_SECRET = process.env.JWT_SECRET || 'licitafacil_secret_key_2024';
 
 function autenticarToken(request) {
@@ -18,14 +19,14 @@ export async function GET(request) {
     
     if (id) {
       const result = await sql`SELECT * FROM licitacoes WHERE id = ${id}`;
-      if (result.rowCount === 0) {
+      if (result.length === 0) {
         return Response.json({ erro: 'Licitação não encontrada' }, { status: 404 });
       }
-      return Response.json(result.rows[0]);
+      return Response.json(result[0]);
     }
     
     const result = await sql`SELECT * FROM licitacoes ORDER BY created_at DESC`;
-    return Response.json(result.rows);
+    return Response.json(result);
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 401 });
   }
@@ -41,7 +42,7 @@ export async function POST(request) {
       VALUES (${body.numero}, ${body.ano}, ${body.modalidade}, ${body.objeto}, ${body.secretaria}, ${body.valor_estimado}, ${body.fonte_recurso}, ${body.status || 'em_elaboracao'}, ${body.data_criacao}, ${body.data_publicacao}, ${body.data_sessao}, ${body.data_homologacao}, ${body.observacoes})
       RETURNING *`;
     
-    return Response.json(result.rows[0], { status: 201 });
+    return Response.json(result[0], { status: 201 });
   } catch (err) {
     return Response.json({ erro: err.message }, { status: 500 });
   }
