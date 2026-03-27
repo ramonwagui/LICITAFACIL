@@ -9,6 +9,7 @@
     "build": "echo 'Backend não requer build'"
   },
   "dependencies": {
+    "@vercel/express": "^0.1.64",
     "@vercel/postgres": "^0.5.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
